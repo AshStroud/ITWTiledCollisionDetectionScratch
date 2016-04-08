@@ -22,17 +22,17 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import java.util.ArrayList;
 
+//Sources: Implementing Collison Detection with Tiled: https://www.youtube.com/watch?v=MT5YwZsQnF8
+//													https://github.com/libgdx/libgdx/wiki/Tile-maps
+//			Drawing Rectangle to Screen: https://www.youtube.com/watch?v=xdc_1Pf-jnA
 public class GamTiledCollisionDetection extends ApplicationAdapter {
 	//SpriteBatch batch;
 	//Texture img;
 	private static final int nCols = 4;
 	private static final int nRows = 4;
 
-	int nHeight = 480;
-	int nWidth = 640;
-
-	//Rectangle rectScreenBounds = frame.getBounds();
-	//int nHeight = displaymetrics
+	//int nHeight = 480;
+	//int nWidth = 640;
 
 	SpriteBatch SbBatch;;
 	Texture txSprite;
@@ -91,9 +91,7 @@ public class GamTiledCollisionDetection extends ApplicationAdapter {
 
 		//Setting Up Orthographic Camera
 		OcCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		//OcCam.viewportWidth = Gdx.graphics.getWidth();
-		//OcCam.viewportHeight = Gdx.graphics.getHeight();
-		//OcCam.position.set(Gdx.graphics.getWidth()/2f, Gdx.graphics.getHeight()/2f, 0); //by default camera position on (0,0,0)
+		OcCam.update();
 	}
 
 	@Override
@@ -138,7 +136,6 @@ public class GamTiledCollisionDetection extends ApplicationAdapter {
 		OrhtoTmrRenderer.setView(OcCam);
 		OrhtoTmrRenderer.render();
 
-		//OcCam.position.set(-300, -250 , 0);
 		//OrthoGraphic Camera
 		OcCam.position.set(fSpriteX, fSpriteY, 0);
 		SbBatch.setProjectionMatrix(OcCam.combined);
