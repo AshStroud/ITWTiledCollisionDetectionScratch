@@ -131,13 +131,13 @@ public class GamTiledCollisionDetection extends ApplicationAdapter {
 			System.out.println("Player Sprite X:" + fSpriteX + "PlayerSpriteY:" + fSpriteY);
 			sDirection = "Down";
 		}
-
 		//Rendering Tiled Map
 		OrhtoTmrRenderer.setView(OcCam);
 		OrhtoTmrRenderer.render();
 
 		//OrthoGraphic Camera
 		OcCam.position.set(fSpriteX, fSpriteY, 0);
+		//OcCam.setToOrtho(false, , 0);
 		SbBatch.setProjectionMatrix(OcCam.combined);
 		OcCam.update();
 
