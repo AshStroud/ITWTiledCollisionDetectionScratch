@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -34,10 +35,10 @@ public class GamTiledCollisionDetection extends ApplicationAdapter {
 	//int nHeight = 480;
 	//int nWidth = 640;
 
-	SpriteBatch SbBatch;;
+	SpriteBatch sbBatch;
 	Texture txSprite;
-	TextureRegion[] trFrames;
-	TextureRegion CurrentFrame;
+	TextureRegion[] artrFrames;
+	TextureRegion trCurrentFrame;
 	float fSpriteX = 0;
 	float fSpriteY = 0;
 	float fSpriteSpeed = 45f;
@@ -46,35 +47,42 @@ public class GamTiledCollisionDetection extends ApplicationAdapter {
 
 
 	TiledMap tmGameMap;
-	OrthogonalTiledMapRenderer OrhtoTmrRenderer;
-	OrthographicCamera OcCam;
+	OrthogonalTiledMapRenderer orthotmrRenderer;
+	OrthographicCamera ocMainCam;
 
-	ArrayList<Rectangle> arlRectCollisionDetection;
+	ArrayList<Rectangle> arlRectCollisionDetection = new ArrayList <Rectangle> ();
 	Rectangle rectSprite;
+	Rectangle rectCollision;
 	String sDirection;
 
 	ShapeRenderer srSpriteRect;
+	ShapeRenderer srCollisionRect;
 	@Override
 	public void create () {
-		SbBatch = new SpriteBatch();
+		sbBatch = new SpriteBatch();
 		srSpriteRect = new ShapeRenderer();
+		srCollisionRect = new ShapeRenderer();
 		txSprite = new Texture(Gdx.files.internal("CinderellaSpriteSheet.png"));
 		TextureRegion[][] tmp = TextureRegion.split(txSprite, txSprite.getWidth() / nCols, txSprite.getHeight() / nRows);
-		trFrames = new TextureRegion[nCols * nRows];
+		artrFrames = new TextureRegion[nCols * nRows];
 		int index = 0;
 		for (int i = 0; i < nRows; i++) {
 			for (int j = 0; j < nCols; j++) {
-				trFrames[index++] = tmp[i][j];
+				artrFrames[index++] = tmp[i][j];
 			}
 		}
-		aniMain = new Animation(1f, trFrames);
+		aniMain = new Animation(1f, artrFrames);
+
+		ocMainCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		ocMainCam.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		ocMainCam.update();
 
 		//Setting Up TiledMap
 		tmGameMap= new TmxMapLoader().load("CollisionDetectionScratchMap.tmx");
-		OrhtoTmrRenderer = new OrthogonalTiledMapRenderer(tmGameMap);
-		arlRectCollisionDetection = new ArrayList<Rectangle>();
-
-		for(int i = 0; i < 20; i++){
+		orthotmrRenderer = new OrthogonalTiledMapRenderer(tmGameMap);
+		//Creating Bounds for Collision Detection
+		MapObjects moCollisionDetection = tmGameMap.getLayers().get("Object Layer 1").getObjects();
+		/*for(int i = 0; i < 20; i++){
 			for(int j = 0; j < 20; j++){
 				TiledMapTileLayer TmTlTrees = (TiledMapTileLayer) tmGameMap.getLayers().get("Foreground");
 				Cell cCurrentTile = new Cell();
@@ -87,11 +95,15 @@ public class GamTiledCollisionDetection extends ApplicationAdapter {
 					System.out.println("Added rectangle!");
 				}
 			}
-		}
+		}*/
 
-		//Setting Up Orthographic Camera
-		OcCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		OcCam.update();
+		for(int i = 0; i < arlRectCollisionDetection.size(); i++){
+			srCollisionRect.begin(ShapeType.Filled);
+			srCollisionRect.setColor(Color.RED);
+			srCollisionRect.rect(arlRectCollisionDetection.get(i).getX(), arlRectCollisionDetection.get(i).getY(), arlRectCollisionDetection.get(i).getWidth(), arlRectCollisionDetection.get(i).getHeight());
+			System.out.println("Drawing Rectangle");
+			srCollisionRect.end();
+		}
 	}
 
 	@Override
@@ -105,55 +117,57 @@ public class GamTiledCollisionDetection extends ApplicationAdapter {
 
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		CurrentFrame = aniMain.getKeyFrame(0);
+		trCurrentFrame = aniMain.getKeyFrame(0);
 
 		if (Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT)) {
 			fSpriteX -= Gdx.graphics.getDeltaTime() * fSpriteSpeed;
-			CurrentFrame = aniMain.getKeyFrame(4 + fTime);
-			System.out.println("Player Sprite X:" + fSpriteX + "PlayerSpriteY:" + fSpriteY);
+			trCurrentFrame = aniMain.getKeyFrame(4 + fTime);
+			//System.out.println("Player Sprite X:" + fSpriteX + "PlayerSpriteY:" + fSpriteY);
 			sDirection = "Left";
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.DPAD_RIGHT)) {
 			fSpriteX += Gdx.graphics.getDeltaTime() * fSpriteSpeed;
-			CurrentFrame = aniMain.getKeyFrame(8 + fTime);
-			System.out.println("Player Sprite X:" + fSpriteX + "PlayerSpriteY:" + fSpriteY);
+			trCurrentFrame = aniMain.getKeyFrame(8 + fTime);
+			//System.out.println("Player Sprite X:" + fSpriteX + "PlayerSpriteY:" + fSpriteY);
 			sDirection = "Right";
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.DPAD_UP)) {
 			fSpriteY += Gdx.graphics.getDeltaTime() * fSpriteSpeed;
-			CurrentFrame = aniMain.getKeyFrame(12 + fTime);
-			System.out.println("Player Sprite X:" + fSpriteX + "PlayerSpriteY:" + fSpriteY);
+			trCurrentFrame = aniMain.getKeyFrame(12 + fTime);
+			//System.out.println("Player Sprite X:" + fSpriteX + "PlayerSpriteY:" + fSpriteY);
 			sDirection = "Up";
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.DPAD_DOWN)) {
 			fSpriteY -= Gdx.graphics.getDeltaTime() * fSpriteSpeed;
-			CurrentFrame = aniMain.getKeyFrame(0 + fTime);
-			System.out.println("Player Sprite X:" + fSpriteX + "PlayerSpriteY:" + fSpriteY);
+			trCurrentFrame = aniMain.getKeyFrame(0 + fTime);
+			//System.out.println("Player Sprite X:" + fSpriteX + "PlayerSpriteY:" + fSpriteY);
 			sDirection = "Down";
 		}
 		//Rendering Tiled Map
-		OrhtoTmrRenderer.setView(OcCam);
-		OrhtoTmrRenderer.render();
+		ocMainCam.update();
+		orthotmrRenderer.setView(ocMainCam);
+		orthotmrRenderer.render();
+		ocMainCam.update();
 
 		//OrthoGraphic Camera
-		OcCam.position.set(fSpriteX, fSpriteY, 0);
+		/*ocMainCam.position.set(fSpriteX, fSpriteY, 0);
 		//OcCam.setToOrtho(false, , 0);
-		SbBatch.setProjectionMatrix(OcCam.combined);
-		OcCam.update();
+		sbBatch.setProjectionMatrix(ocMainCam.combined);
+		ocMainCam.update();*/
 
 		//Draw Sprites
-		SbBatch.begin();
-		SbBatch.draw(CurrentFrame, (int) fSpriteX, (int) fSpriteY);
-		System.out.println("Sprite drawn at" + fSpriteX + " and y value" + fSpriteY);
-		SbBatch.end();
+		sbBatch.begin();
+		sbBatch.draw(trCurrentFrame, (int) fSpriteX, (int) fSpriteY);
+		//System.out.println("Sprite drawn at" + fSpriteX + " and y value" + fSpriteY);
+		sbBatch.end();
 
 		srSpriteRect.begin(ShapeType.Filled);
 		//srSpriteRect.set(rectSprite);
 		srSpriteRect.setColor(Color.BLUE);
-		srSpriteRect.rect(fSpriteX, fSpriteY, CurrentFrame.getRegionWidth(), CurrentFrame.getRegionHeight());
+		srSpriteRect.rect(fSpriteX, fSpriteY, trCurrentFrame.getRegionWidth(), trCurrentFrame.getRegionHeight());
 		srSpriteRect.end();
 
-		rectSprite = new Rectangle(fSpriteX, fSpriteY,fSpriteX +CurrentFrame.getRegionWidth(),fSpriteY+ CurrentFrame.getRegionHeight());
+		rectSprite = new Rectangle(fSpriteX, fSpriteY,fSpriteX +trCurrentFrame.getRegionWidth(),fSpriteY+ trCurrentFrame.getRegionHeight());
 		//rectSprite = new Rectangle(fSpriteX, fSpriteY, txSprite.getWidth(), txSprite.getHeight());
 
 
