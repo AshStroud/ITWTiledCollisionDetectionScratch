@@ -28,6 +28,7 @@ import java.util.ArrayList;
 //													https://github.com/libgdx/libgdx/wiki/Tile-maps
 //			Drawing Rectangle to Screen: https://www.youtube.com/watch?v=xdc_1Pf-jnA
 //			Implementing Collision Detection using Object Layers: http://stackoverflow.com/questions/22152925/libgdx-tiled-map-collision-detection
+//			Orthographic Camera Properties: http://www.gamefromscratch.com/post/2014/04/16/LibGDX-Tutorial-11-Tiled-Maps-Part-1-Simple-Orthogonal-Maps.aspx
 public class GamTiledCollisionDetection extends ApplicationAdapter {
 	private static final int nCols = 4;
 	private static final int nRows = 4;
