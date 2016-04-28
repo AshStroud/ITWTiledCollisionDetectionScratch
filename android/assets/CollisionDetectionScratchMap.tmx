@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="32" tileheight="32" nextobjectid="4">
  <tileset firstgid="1" name="terrain_atlas" tilewidth="32" tileheight="32" tilecount="1024" columns="32">
-  <image source="../../../Spritesheets and TileArt/terrain_atlas.png" width="1024" height="1024"/>
+  <image source="Spritesheets and TileArt/terrain_atlas.png" width="1024" height="1024"/>
   <tile id="925">
    <properties>
     <property name="Walkability" value="No"/>
