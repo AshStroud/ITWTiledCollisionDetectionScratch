@@ -78,13 +78,13 @@ public class GamTiledCollisionDetection extends ApplicationAdapter {
 		tmGameMap= new TmxMapLoader().load("CollisionDetectionScratchMap.tmx");
 		orthotmrRenderer = new OrthogonalTiledMapRenderer(tmGameMap);
 		//Creating Bounds for Collision Detection
-		//Get the object layer from the Tiled Map
+		//Get the Object layer of rectangles from the Tiled map
 		moCollisionDetection = tmGameMap.getLayers().get("Object Layer 1").getObjects();
-		//Loop through all of the objects in the Object layer, creating a rectangle from each object
+		//Loop through the objects in the object layer, creating a rectangle from each object's information (height, width, etc)
 		for (int i = 0; i < moCollisionDetection.getCount(); i++) {
 			rmoCollisionRect = (RectangleMapObject) moCollisionDetection.get(i);
 			rectObjectBounds = rmoCollisionRect.getRectangle();
-			//Add rectangle to Arraylist
+			//Add this rectangle made from the Object into an arraylist
 			arlRectObjectBounds.add(rectObjectBounds);
 			System.out.println("Rectangle Added!");
 		}
@@ -143,9 +143,8 @@ public class GamTiledCollisionDetection extends ApplicationAdapter {
 
 		//Check through all of the rectangles in the Arraylist of Rectangles
 		for (int i = 0; i < arlRectObjectBounds.size(); i++) {
-			if(rectSprite.overlaps(arlRectObjectBounds.get(i))) { //Checking to see if the sprite rectangle intersects any of the rectangles in the Object Layer in any way
+			if(rectSprite.overlaps(arlRectObjectBounds.get(i))) { //Checking to see if the sprite rectangle intersects any of the rectangles in the arraylist of rectangles from the object layer
 				System.out.println("Collision Detected");
-				//Ifa
 				if(sDirection == "Up"){
 					fSpriteY -= 1f;
 					//System.out.println("Rectangle Location:" + arlRectCollisionDetection.get(i));
@@ -174,3 +173,48 @@ public class GamTiledCollisionDetection extends ApplicationAdapter {
 
 	}
 }
+
+//Old Collision Detection Code
+
+		/*for(int i = 0; i < arlRectCollisionDetection.size(); i++){
+			if(rectSprite.overlaps(arlRectCollisionDetection.get(i))){
+				System.out.println("Collision detected!");
+				System.out.println(sDirection);
+				if(sDirection == "Up"){
+					fSpriteY -= 1f;
+					//System.out.println("Rectangle Location:" + arlRectCollisionDetection.get(i));
+					//System.out.println("Player Location:" + "X:" + fSpriteX + "Y: " + fSpriteY);
+				}
+				else if(sDirection == "Down"){
+					fSpriteY += 1f;
+					//System.out.println("Rectangle Location:" + arlRectCollisionDetection.get(i));
+					//System.out.println("Player Location:" + "X:" + fSpriteX + "Y: " + fSpriteY);
+				}
+				else if(sDirection == "Right") {
+					fSpriteX -= 1f;
+					//System.out.println("Rectangle Location:" + arlRectCollisionDetection.get(i));
+					//System.out.println("Player Location:" + "X:" + fSpriteX + "Y: " + fSpriteY);
+				}
+				else if(sDirection == "Left"){
+					fSpriteX += 1f;
+					//System.out.println("Rectangle Location:" + arlRectCollisionDetection.get(i));
+					//System.out.println("Player Location:" + "X:" + fSpriteX + "Y: " + fSpriteY);
+					//System.out.println("Play Rectangle: " + rectSprite);
+				}
+			}
+		}*/
+//Old Setup for Collision Detection
+/*for(int i = 0; i < 20; i++){
+			for(int j = 0; j < 20; j++){
+				TiledMapTileLayer TmTlTrees = (TiledMapTileLayer) tmGameMap.getLayers().get("Foreground");
+				Cell cCurrentTile = new Cell();
+
+				if(TmTlTrees.getCell(i, j)!= null){
+					cCurrentTile = TmTlTrees.getCell(i, j);
+					System.out.println(i + " , " + j + " , " + cCurrentTile.getTile().getId());
+					//System.out.println(TmTlTrees.getCell(i, j).)
+					arlRectCollisionDetection.add(new Rectangle(i * 64, j * 64, 64, 64));
+					System.out.println("Added rectangle!");
+				}
+			}
+		}*/
